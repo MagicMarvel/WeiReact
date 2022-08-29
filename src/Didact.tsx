@@ -126,16 +126,22 @@ function render(element: ElementInformation, container: HTMLElement) {
          * @param workInProgressFiber 当前正在渲染的fiber
          */
         function findNextWorkInProgressFiber(workInProgressFiber: Fiber): Fiber {
-            // throw new Error("Function not implemented.");
-            //如果有儿子，先访问左儿子
             if (workInProgressFiber.child) {
+                //如果有儿子，先访问左儿子
                 return workInProgressFiber.child;
+<<<<<<< HEAD
             }
             else if(workInProgressFiber.silbing){
                 return workInProgressFiber.silbing;
             }
             //如果没有儿子，就一直往上找有右儿子的爸爸
             else {
+=======
+            } else if (workInProgressFiber.silbing) {
+                return workInProgressFiber.silbing;
+            } else {
+                //如果没有儿子，就一直往上找有右儿子的爸爸
+>>>>>>> origin/master
                 let now = workInProgressFiber;
                 while (now.parent) {
                     if (now.parent.silbing) return now.parent.silbing;
@@ -163,10 +169,15 @@ function render(element: ElementInformation, container: HTMLElement) {
             }
             commitWork(root);
             container.appendChild(root.dom);
+            // console.log(root.dom);
         }
 
 
         if (deadline.timeRemaining() > 30 && workInProgressFiber != null) {
+=======
+        if (deadline.timeRemaining() > 10 && workInProgressFiber != null) {
+            debugger;
+>>>>>>> origin/master
             workInProgressFiber.dom = createDom(workInProgressFiber);
             createChildrenFiber(workInProgressFiber);
             workInProgressFiber = findNextWorkInProgressFiber(workInProgressFiber);
@@ -185,6 +196,16 @@ const element = (
     <div>
         <h1 className="hahaha">凯哥好厉害！</h1>
         <h1>*\^_^/*</h1>
+=======
+        <div>
+            <h2>hahaha</h2>
+            <h3>bilibili</h3>
+        </div>
+        <h1 className="weiwei" style={{ color: "red" }}>
+            Wei
+        </h1>
+        <code>#include weiwei</code>
+>>>>>>> origin/master
     </div>
 );
 
