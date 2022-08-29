@@ -49,6 +49,15 @@ function createElement(type: keyof HTMLElementTagNameMap, props: Object, ...chil
  * @param container 要渲染到的容器
  */
 function render(element: ElementInformation, container: HTMLElement) {
+    let workInProgressRoot = {
+        type: element.type,
+        props: element.props,
+        dom: null,
+        child: null,
+        silbing: null,
+        parent: null,
+    } as Fiber;
+    let workInProgressFiber = workInProgressRoot;
     /**
      * 1.将DOM树转化为二叉树
      * 2.创建DOM元素
@@ -104,8 +113,8 @@ function render(element: ElementInformation, container: HTMLElement) {
                         lastChild = newFiber;
                     } else {
                         lastChild.silbing = newFiber;
+                        newFiber.parent = fiber;
                         lastChild = newFiber;
-                        newFiber.parent = lastChild;
                     }
                     isFirstChild = false;
                 });
@@ -117,24 +126,29 @@ function render(element: ElementInformation, container: HTMLElement) {
          * @param workInProgressFiber 当前正在渲染的fiber
          */
         function findNextWorkInProgressFiber(workInProgressFiber: Fiber): Fiber {
-            // throw new Error("Function not implemented.");
-            //如果有儿子，先访问左儿子
             if (workInProgressFiber.child) {
+                //如果有儿子，先访问左儿子
                 return workInProgressFiber.child;
-            }
-            //如果没有儿子，就一直往上找有右儿子的爸爸
-            else {
+            } else if (workInProgressFiber.silbing) {
+                return workInProgressFiber.silbing;
+            } else {
+                //如果没有儿子，就一直往上找有右儿子的爸爸
                 let now = workInProgressFiber;
                 while (now.parent) {
-                    if (workInProgressFiber.parent.silbing) return workInProgressFiber.parent.silbing;
-                    else now = workInProgressFiber.parent;
+                    if (now.parent.silbing) return now.parent.silbing;
+                    else now = now.parent;
                 }
                 return null;
             }
         }
 
         function commitRoot(root: Fiber) {
-            function commitWork(fiber: Fiber) {
+            /**
+             * 将某个fiber的子节点们append上这个fiber
+             * 注意本fiber连接父fiber不在这里操作
+             * @param fiber 需要渲染的fiber
+             */
+            function commitWork(fiber: Fiber): void {
                 if (fiber.type == "TEXT_ELEMENT") {
                     return;
                 }
@@ -150,20 +164,13 @@ function render(element: ElementInformation, container: HTMLElement) {
                 }
             }
             commitWork(root);
+            // 将这个fiber的dom放到container里面
             container.appendChild(root.dom);
+            // console.log(root.dom);
         }
 
-        let workInProgressRoot = {
-            type: element.type,
-            props: element.props,
-            dom: null,
-            child: null,
-            silbing: null,
-            parent: null,
-        } as Fiber;
-        let workInProgressFiber = workInProgressRoot;
-
-        if (deadline.timeRemaining() > 100 && workInProgressFiber != null) {
+        if (deadline.timeRemaining() > 10 && workInProgressFiber != null) {
+            debugger;
             workInProgressFiber.dom = createDom(workInProgressFiber);
             createChildrenFiber(workInProgressFiber);
             workInProgressFiber = findNextWorkInProgressFiber(workInProgressFiber);
@@ -180,7 +187,14 @@ export const WeiReact = { createElement, render };
 
 const element = (
     <div>
-        <div>asdfadsf</div>
+        <div>
+            <h2>hahaha</h2>
+            <h3>bilibili</h3>
+        </div>
+        <h1 className="weiwei" style={{ color: "red" }}>
+            Wei
+        </h1>
+        <code>#include weiwei</code>
     </div>
 );
 
