@@ -49,6 +49,15 @@ function createElement(type: keyof HTMLElementTagNameMap, props: Object, ...chil
  * @param container 要渲染到的容器
  */
 function render(element: ElementInformation, container: HTMLElement) {
+    let workInProgressRoot = {
+        type: element.type,
+        props: element.props,
+        dom: null,
+        child: null,
+        silbing: null,
+        parent: null,
+    } as Fiber;
+    let workInProgressFiber = workInProgressRoot;
     /**
      * 1.将DOM树转化为二叉树
      * 2.创建DOM元素
@@ -105,7 +114,7 @@ function render(element: ElementInformation, container: HTMLElement) {
                     } else {
                         lastChild.silbing = newFiber;
                         lastChild = newFiber;
-                        newFiber.parent = lastChild;
+                        newFiber.parent = fiber;
                     }
                     isFirstChild = false;
                 });
@@ -122,12 +131,15 @@ function render(element: ElementInformation, container: HTMLElement) {
             if (workInProgressFiber.child) {
                 return workInProgressFiber.child;
             }
+            else if(workInProgressFiber.silbing){
+                return workInProgressFiber.silbing;
+            }
             //如果没有儿子，就一直往上找有右儿子的爸爸
             else {
                 let now = workInProgressFiber;
                 while (now.parent) {
-                    if (workInProgressFiber.parent.silbing) return workInProgressFiber.parent.silbing;
-                    else now = workInProgressFiber.parent;
+                    if (now.parent.silbing) return now.parent.silbing;
+                    else now = now.parent;
                 }
                 return null;
             }
@@ -153,17 +165,8 @@ function render(element: ElementInformation, container: HTMLElement) {
             container.appendChild(root.dom);
         }
 
-        let workInProgressRoot = {
-            type: element.type,
-            props: element.props,
-            dom: null,
-            child: null,
-            silbing: null,
-            parent: null,
-        } as Fiber;
-        let workInProgressFiber = workInProgressRoot;
 
-        if (deadline.timeRemaining() > 100 && workInProgressFiber != null) {
+        if (deadline.timeRemaining() > 30 && workInProgressFiber != null) {
             workInProgressFiber.dom = createDom(workInProgressFiber);
             createChildrenFiber(workInProgressFiber);
             workInProgressFiber = findNextWorkInProgressFiber(workInProgressFiber);
@@ -180,7 +183,8 @@ export const WeiReact = { createElement, render };
 
 const element = (
     <div>
-        <div>asdfadsf</div>
+        <h1 className="hahaha">凯哥好厉害！</h1>
+        <h1>*\^_^/*</h1>
     </div>
 );
 
