@@ -180,12 +180,3 @@ function render(element: ElementInformation, container: HTMLElement) {
 }
 
 export const WeiReact = { createElement, render };
-
-const element = (
-    <div>
-        <h1 className="hahaha">凯哥好厉害！</h1>
-        <h1>*\^_^/*</h1>
-    </div>
-);
-
-render(element, document.getElementById("root"));
