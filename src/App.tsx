@@ -1,27 +1,20 @@
-import { WeiReact, useState } from "./Didact";
+import { WeiReact, useState } from "./WeiReact";
 
 function Wei(props: any) {
-  const [state, setState] = useState(123123);
-  const [people, setPeople] = useState("Wei");
+  const [state, setState] = useState(1);
   return (
     <div>
-      <h1
+      <div
+        style="
+      color:pink"
         onClick={() => {
-          setState(0);
+          setState((state) => state + 1);
         }}
       >
-        {state}
-      </h1>
-      <h2
-        onClick={() => {
-          setPeople((people) => {
-            if (people == "Wei") return "Kai";
-            else return "Wei";
-          });
-        }}
-      >
-        {people}
-      </h2>
+        happy!
+      </div>
+      <h3>Wei</h3>
+      <h2>{state}</h2>
     </div>
   );
 }
